@@ -10,7 +10,7 @@ La fraude à la carte bancaire représente des millions d'euros de pertes chaque
 - **Top 3 facteurs** : Variables V17, V14 et V12 (issues de la décomposition PCA)
 
 ## Demo live
-[Application interactive](https://fraude-bancaire-rbp3gik2mgpd3agnkjure2.streamlit.app/) *(Lien à mettre à jour après déploiement)*
+[Application interactive](https://fraude-bancaire-uh7zuiuytsizl7wcq6dkd9.streamlit.app/)
 
 ## Stack technique
 Python · Pandas · Scikit-learn · SHAP · Streamlit · Plotly
