@@ -7,8 +7,8 @@ Les dépenses de transport (fret) représentent un centre de coût massif pour l
 - **Coût total des expéditions analysées** : 68 817 849 $
 - **Principale anomalie identifiée** : Sur-utilisation coûteuse de l'aérien pour des colis lourds.
 
-## Demo live (lien à compléter)
-[Lien de l'application Streamlit à insérer ici après déploiement]
+## Demo live
+[Application interactive](https://transport-optimisation-cytdvplirftqzzcpt2upyu.streamlit.app/)
 
 ## Stack technique
 Python · Pandas (Analyse) · Streamlit (Interface) · Plotly (Visualisation)
