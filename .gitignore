@@ -1,0 +1,8 @@
+scratch/
+data/
+*.csv
+*.zip
+*.parquet
+.DS_Store
+.venv/
+__pycache__/

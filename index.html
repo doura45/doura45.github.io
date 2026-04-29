@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fofana Abdou | Data Analyst Portfolio</title>
+    <meta name="description" content="Portfolio de Fofana Abdou, Data Analyst spécialisé en Finance et Retail. Découvrez mes projets d'analyse de données, de machine learning et de visualisation.">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #0F172A;
+            --accent: #F97316;
+            --bg-light: #F8FAFC;
+            --text-main: #111827;
+            --text-muted: #4B5563;
+            --white: #FFFFFF;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-light);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--primary);
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .initials-circle {
+            width: 100px;
+            height: 100px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 auto 2rem;
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.025em;
+        }
+
+        .hero h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #94A3B8;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero .stack {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 3rem;
+        }
+
+        .btn-cv {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background-color: var(--accent);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 14px 0 rgba(249, 115, 22, 0.39);
+        }
+
+        .btn-cv:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.45);
+            background-color: #ea580c;
+        }
+
+        /* Section Commons */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* About Section */
+        #about {
+            text-align: center;
+        }
+
+        .about-text {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        /* Skills Section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+
+        .skill-category {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .skill-category h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--primary);
+        }
+
+        .skill-item {
+            margin-bottom: 1.25rem;
+        }
+
+        .skill-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .skill-bar {
+            height: 6px;
+            background: #E2E8F0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: var(--white);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #F1F5F9;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .project-content {
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            line-height: 1.3;
+        }
+
+        .project-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .project-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stack-tag {
+            background: #F1F5F9;
+            color: #475569;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+            border-top: 1px solid #F1F5F9;
+            padding-top: 1.5rem;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary);
+            transition: color 0.3s;
+        }
+
+        .project-link:hover {
+            color: var(--accent);
+        }
+
+        /* Contact Section */
+        .contact-container {
+            background: var(--primary);
+            color: var(--white);
+            padding: 4rem;
+            border-radius: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .contact-container h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-container p {
+            color: #94A3B8;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-methods {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--white);
+            color: var(--primary);
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .contact-btn:hover {
+            background: var(--accent);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .contact-btn.alt {
+            background: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+        }
+
+        .contact-btn.alt:hover {
+            border-color: var(--accent);
+            background: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: #64748B;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid #1E293B;
+        }
+
+        .footer-logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--white);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .nav-links { display: none; }
+            .projects-grid { grid-template-columns: 1fr; }
+            .contact-container { padding: 2.5rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">FOFANA<span>.</span></a>
+            <div class="nav-links">
+                <a href="#about">À propos</a>
+                <a href="#skills">Compétences</a>
+                <a href="#projects">Projets</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="initials-circle">FA</div>
+            <h1>Fofana Abdou</h1>
+            <h2>Data Analyst | Finance & Retail</h2>
+            <p class="stack">Python · SQL · Power BI · Streamlit</p>
+            <a href="mailto:abdou.fofana@example.com" class="btn-cv">
+                <i data-lucide="download"></i>
+                Télécharger mon CV
+            </a>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="reveal">
+        <h2 class="section-title">À propos</h2>
+        <p class="about-text">
+            Passionné par l'exploitation des données pour éclairer la prise de décision stratégique. 
+            Avec une expertise double en Finance et Retail, j'aide les entreprises à transformer leurs 
+            données brutes en insights actionnables grâce à des modèles prédictifs et des dashboards dynamiques.
+        </p>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="reveal">
+        <h2 class="section-title">Compétences</h2>
+        <div class="skills-grid">
+            <!-- Category 1 -->
+            <div class="skill-category">
+                <h3><i data-lucide="bar-chart-3"></i> Analyse & BI</h3>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Power BI</span><span>90%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Excel (Expert)</span><span>95%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 95%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>SQL</span><span>85%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+                </div>
+            </div>
+
+            <!-- Category 2 -->
+            <div class="skill-category">
+                <h3><i data-lucide="code-2"></i> Programmation & Data</h3>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Python</span><span>88%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 88%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Streamlit</span><span>92%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 92%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>DuckDB / Polars</span><span>80%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 80%"></div></div>
+                </div>
+            </div>
+
+            <!-- Category 3 -->
+            <div class="skill-category">
+                <h3><i data-lucide="database"></i> ETL & Intégration</h3>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Talend</span><span>75%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 75%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>N8N</span><span>82%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 82%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-info"><span>Automatisation</span><span>85%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="reveal">
+        <h2 class="section-title">Mes Projets</h2>
+        <div class="projects-grid">
+            
+            <!-- Project 1 -->
+            <div class="project-card">
+                <div class="project-content">
+                    <span class="project-category">Banque / Finance</span>
+                    <h3 class="project-title">Analyse du Churn Client</h3>
+                    <p class="project-desc">Identification des clients à risque de départ avec un modèle Random Forest (Recall 0.714) pour optimiser la rétention.</p>
+                    <div class="project-stack">
+                        <span class="stack-tag">Python</span>
+                        <span class="stack-tag">Scikit-learn</span>
+                        <span class="stack-tag">SHAP</span>
+                        <span class="stack-tag">Streamlit</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/doura45/churn-finance-analyse" target="_blank" class="project-link"><i data-lucide="github"></i> Code</a>
+                        <a href="https://churn-finance-analyse-rbp3gik2mgpd3agnkjure2.streamlit.app/" target="_blank" class="project-link"><i data-lucide="external-link"></i> Démo</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card">
+                <div class="project-content">
+                    <span class="project-category">Sécurité / Finance</span>
+                    <h3 class="project-title">Détection de Fraude Bancaire</h3>
+                    <p class="project-desc">Système de détection en temps réel sur 284 807 transactions avec gestion de l'imbalance (0.17% de fraudes).</p>
+                    <div class="project-stack">
+                        <span class="stack-tag">Python</span>
+                        <span class="stack-tag">Scikit-learn</span>
+                        <span class="stack-tag">SHAP</span>
+                        <span class="stack-tag">Streamlit</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/doura45/fraude-bancaire" target="_blank" class="project-link"><i data-lucide="github"></i> Code</a>
+                        <a href="https://fraude-bancaire-uh7zuiuytsizl7wcq6dkd9.streamlit.app/" target="_blank" class="project-link"><i data-lucide="external-link"></i> Démo</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card">
+                <div class="project-content">
+                    <span class="project-category">Risque / Finance</span>
+                    <h3 class="project-title">Scoring de Crédit</h3>
+                    <p class="project-desc">Évaluation du risque de défaut de paiement avec mesure de performance AUC-ROC 0.703 et analyse du taux de défaut.</p>
+                    <div class="project-stack">
+                        <span class="stack-tag">Python</span>
+                        <span class="stack-tag">Scikit-learn</span>
+                        <span class="stack-tag">Streamlit</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/doura45/scoring-credit" target="_blank" class="project-link"><i data-lucide="github"></i> Code</a>
+                        <a href="https://scoring-credit-hryuwvqx8qfj3mak2uwdee.streamlit.app/" target="_blank" class="project-link"><i data-lucide="external-link"></i> Démo</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 4 -->
+            <div class="project-card">
+                <div class="project-content">
+                    <span class="project-category">Retail / E-commerce</span>
+                    <h3 class="project-title">Performance Retail Olist</h3>
+                    <p class="project-desc">Analyse granulaire du CA sur 112 650 commandes, segmentation par catégories et top vendeurs via Looker Studio.</p>
+                    <div class="project-stack">
+                        <span class="stack-tag">DuckDB</span>
+                        <span class="stack-tag">Polars</span>
+                        <span class="stack-tag">Looker Studio</span>
+                        <span class="stack-tag">Streamlit</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/doura45/optimisation-marge" target="_blank" class="project-link"><i data-lucide="github"></i> Code</a>
+                        <a href="https://datastudio.google.com/reporting/73a51b39-02c7-45e4-9e65-2461656b19b9/" target="_blank" class="project-link"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 5 -->
+            <div class="project-card">
+                <div class="project-content">
+                    <span class="project-category">Logistique / Retail</span>
+                    <h3 class="project-title">Gestion des Ruptures de Stock</h3>
+                    <p class="project-desc">Prévision de la demande avec Prophet sur 2 160 produits et mise en place d'alertes automatiques.</p>
+                    <div class="project-stack">
+                        <span class="stack-tag">Python</span>
+                        <span class="stack-tag">Prophet</span>
+                        <span class="stack-tag">Streamlit</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/doura45/rupture-stock" target="_blank" class="project-link"><i data-lucide="github"></i> Code</a>
+                        <a href="https://rupture-stock-9nlzrqbp4rw5nfojspmvjl.streamlit.app/" target="_blank" class="project-link"><i data-lucide="external-link"></i> Démo</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 6 -->
+            <div class="project-card">
+                <div class="project-content">
+                    <span class="project-category">Supply Chain</span>
+                    <h3 class="project-title">Optimisation Coûts Transport</h3>
+                    <p class="project-desc">Simulateur de scénarios permettant une économie de $889 772 via l'optimisation du mix modal (Air vs Ocean).</p>
+                    <div class="project-stack">
+                        <span class="stack-tag">Python</span>
+                        <span class="stack-tag">Pandas</span>
+                        <span class="stack-tag">Streamlit</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/doura45/transport-optimisation" target="_blank" class="project-link"><i data-lucide="github"></i> Code</a>
+                        <a href="https://transport-optimisation-cytdvplirftqzzcpt2upyu.streamlit.app/" target="_blank" class="project-link"><i data-lucide="external-link"></i> Démo</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="reveal">
+        <div class="contact-container">
+            <h2>Discutons de votre projet</h2>
+            <p>Disponible pour des opportunités en Data Analytics ou pour collaborer sur des projets innovants.</p>
+            <div class="contact-methods">
+                <a href="mailto:abdou.fofana@example.com" class="contact-btn">
+                    <i data-lucide="mail"></i>
+                    Me contacter par email
+                </a>
+                <a href="https://linkedin.com/in/abdou-fofana-198043107" target="_blank" class="contact-btn alt">
+                    <i data-lucide="linkedin"></i>
+                    Profil LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <span class="footer-logo">FOFANA ABDOU</span>
+        <p>&copy; 2024 - Tous droits réservés.</p>
+        <p style="font-size: 0.75rem; margin-top: 0.5rem; opacity: 0.5;">Analyste de données passionné par l'impact business.</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Reveal on scroll logic
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        reveal();
+    </script>
+</body>
+</html>
