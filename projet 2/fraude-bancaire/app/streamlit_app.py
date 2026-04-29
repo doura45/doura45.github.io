@@ -70,14 +70,14 @@ with tab1:
                            x='Class', y='count', color='Class',
                            log_y=True, labels={'count': 'Nombre (Log)', 'Class': '0: Normal, 1: Fraude'},
                            color_discrete_sequence=['#2ecc71', '#e74c3c'])
-        st.plotly_chart(fig_count, width="stretch")
+        st.plotly_chart(fig_count, use_container_width=True)
         
     with c2:
         st.subheader("Distribution des Montants")
         fig_dist = px.box(df, x='Class', y='Amount', color='Class',
                           log_y=True, labels={'Amount': 'Montant (Log)', 'Class': 'Type'},
                           color_discrete_map={0: '#2ecc71', 1: '#e74c3c'})
-        st.plotly_chart(fig_dist, width="stretch")
+        st.plotly_chart(fig_dist, use_container_width=True)
 
 # --- ONGLET 2 : ANALYSE DES FRAUDES ---
 with tab2:
@@ -92,7 +92,7 @@ with tab2:
         top_10.columns = ['Variable', 'Importance']
         fig_imp = px.bar(top_10, x='Importance', y='Variable', orientation='h',
                          color='Importance', color_continuous_scale='Reds')
-        st.plotly_chart(fig_imp, width="stretch")
+        st.plotly_chart(fig_imp, use_container_width=True)
         
     with col_b:
         st.write("**Heures les plus fréquentes pour la fraude**")
@@ -102,7 +102,7 @@ with tab2:
         fig_hour = px.histogram(fraud_hours, nbins=24, 
                                 labels={'value': 'Heure de la journée'},
                                 color_discrete_sequence=['#e74c3c'])
-        st.plotly_chart(fig_hour, width="stretch")
+        st.plotly_chart(fig_hour, use_container_width=True)
 
     st.divider()
     st.write("**Graphique SHAP (Explication globale)**")
