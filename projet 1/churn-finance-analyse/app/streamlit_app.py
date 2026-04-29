@@ -76,7 +76,7 @@ with tab1:
         fig_pie = px.pie(df, names='Churn', hole=0.5, 
                          color_discrete_sequence=['#2ecc71', '#e74c3c'],
                          labels={'Churn': 'Départ'})
-        st.plotly_chart(fig_pie, width="stretch")
+        st.plotly_chart(fig_pie, use_container_width=True)
         
     with col_right:
         st.subheader("Taux de Churn par Type de Contrat")
@@ -95,7 +95,7 @@ with tab1:
         
         # Formatage des labels sur les barres
         fig_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
-        st.plotly_chart(fig_bar, width="stretch")
+        st.plotly_chart(fig_bar, use_container_width=True)
 
 # --- ONGLET 2 : CAUSES DU CHURN ---
 with tab2:
@@ -108,7 +108,7 @@ with tab2:
         fig_box = px.box(df, x="Churn", y="MonthlyCharges", color="Churn",
                          color_discrete_map={'No': '#2ecc71', 'Yes': '#e74c3c'},
                          labels={'MonthlyCharges': 'Frais Mensuels ($)'})
-        st.plotly_chart(fig_box, width="stretch")
+        st.plotly_chart(fig_box, use_container_width=True)
         
     with col_b:
         st.write("**Impact de l'Ancienneté**")
@@ -116,7 +116,7 @@ with tab2:
         fig_tenure = px.bar(tenure_avg, x='Churn', y='tenure', color='Churn',
                             color_discrete_map={'No': '#2ecc71', 'Yes': '#e74c3c'},
                             labels={'tenure': 'Ancienneté Moyenne (Mois)'})
-        st.plotly_chart(fig_tenure, width="stretch")
+        st.plotly_chart(fig_tenure, use_container_width=True)
         
     st.divider()
     
@@ -128,7 +128,7 @@ with tab2:
     
     fig_imp = px.bar(top_5, x='Importance', y='Variable', orientation='h',
                      color='Importance', color_continuous_scale='Greens')
-    st.plotly_chart(fig_imp, width="stretch")
+    st.plotly_chart(fig_imp, use_container_width=True)
 
 # --- ONGLET 3 : SIMULATEUR CLIENT ---
 with tab3:
