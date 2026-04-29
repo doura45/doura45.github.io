@@ -109,17 +109,15 @@
             margin: 0 auto;
         }
 
-        .initials-circle {
-            width: 60px;
-            height: 60px;
+        .profile-photo {
+            width: 80px;
+            height: 80px;
             background-color: var(--accent);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.5rem;
+            display: block;
+            object-fit: cover;
+            border: 3px solid var(--accent);
             box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
         }
 
@@ -458,7 +456,7 @@
     <!-- Hero Section -->
     <header class="hero">
         <div class="hero-content">
-            <div class="initials-circle">FA</div>
+            <img src="photo.jpg" alt="Fofana Abdou" class="profile-photo">
             <h1>Fofana Abdou</h1>
             <h2>Data Analyst | Finance & Retail</h2>
             <p class="stack">Python · SQL · Power BI · Streamlit</p>
