@@ -11,7 +11,7 @@ Le défi pour une institution financière est d'identifier avec précision les c
 - **AUC-PR** : 0.187 (Précision-Rappel robuste sur données originales)
 
 ## Demo live
-[Application interactive](https://scoring-credit-uh7zuiuytsizl7wcq6dkd9.streamlit.app/) *(Lien à mettre à jour après déploiement)*
+[Application interactive](https://scoring-credit-hryuwvqx8qfj3mak2uwdee.streamlit.app/)
 
 ## Stack technique
 Python · Pandas · Scikit-learn · Random Forest · SHAP · Streamlit · Plotly
