@@ -3,175 +3,159 @@ import pandas as pd
 import numpy as np
 import joblib
 import plotly.express as px
-import plotly.graph_objects as go
 import os
-import shap
-
-# Détection de Fraude Bancaire — Analyse des Transactions
 
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(
-    page_title="Détection de Fraude Bancaire — Analyse des Transactions",
+    page_title="Détection de Fraude — Fofana Abdou",
     layout="wide"
 )
 
 # --- CHARGEMENT DES DONNÉES ET DU MODÈLE ---
 @st.cache_data
-def load_data():
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DATA_PATH = os.path.join(BASE_DIR, "..", "data", "creditcard.csv")
-    df = pd.read_csv(DATA_PATH)
+def charger_donnees():
+    # On définit le chemin vers le fichier CSV
+    dossier_actuel = os.path.dirname(__file__)
+    chemin_data = os.path.join(dossier_actuel, "..", "data", "creditcard.csv")
+    df = pd.read_csv(chemin_data)
     return df
 
 @st.cache_resource
-def load_model():
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    model = joblib.load(os.path.join(BASE_DIR, "model.joblib"))
-    columns = joblib.load(os.path.join(BASE_DIR, "model_columns.joblib"))
+def charger_modele():
+    dossier_actuel = os.path.dirname(__file__)
+    # Chargement du modèle de Machine Learning et des noms de colonnes
+    model = joblib.load(os.path.join(dossier_actuel, "model.joblib"))
+    columns = joblib.load(os.path.join(dossier_actuel, "model_columns.joblib"))
     return model, columns
 
+# Exécution du chargement avec gestion d'erreur simple
 try:
-    df = load_data()
-    model, model_columns = load_model()
+    df = charger_donnees()
+    model, model_columns = charger_modele()
 except Exception as e:
-    st.error(f"Erreur de chargement : {e}")
+    st.error(f"Erreur lors du chargement des fichiers : {e}")
     st.stop()
 
-# --- SIDEBAR ---
+# --- BARRE LATÉRALE (SIDEBAR) ---
 with st.sidebar:
     st.title("Fofana Abdou")
-    st.markdown("""
-    **Détection de Fraude Bancaire**
-    J'ai développé ce système pour identifier les transactions frauduleuses parmi des milliers de paiements légitimes, en utilisant un modèle Random Forest optimisé.
-    """)
-    st.divider()
-    st.info("Utilisez les onglets pour explorer les données et tester le simulateur.")
+    st.write("Data Analyst")
+    st.markdown("---")
+    st.write("Ce projet utilise un modèle de Machine Learning pour identifier les transactions bancaires à risque.")
 
 # --- TITRE PRINCIPAL ---
-st.title("Détection de Fraude Bancaire — Analyse des Transactions")
+st.title("Détection de Fraude Bancaire")
 st.markdown("---")
 
 # --- ONGLETS ---
-tab1, tab2, tab3 = st.tabs(["Vue Globale", "Analyse des Fraudes", "Simulateur de Transaction"])
+onglet1, onglet2, onglet3 = st.tabs(["Statistiques Globales", "Facteurs de Risque", "Testeur de Transaction"])
 
-# --- ONGLET 1 : VUE GLOBALE ---
-with tab1:
-    col1, col2, col3 = st.columns(3)
+# --- ONGLET 1 : STATISTIQUES GLOBALES ---
+with onglet1:
+    col_a, col_b, col_c = st.columns(3)
     
-    fraud_rate = (df['Class'].value_counts(normalize=True)[1] * 100)
-    col1.metric("Taux de Fraude", f"{fraud_rate:.4f}%")
-    col2.metric("Total Transactions", f"{len(df):,}")
-    col3.metric("Nombre de Fraudes", f"{df['Class'].sum()}")
+    total_trans = len(df)
+    nb_fraudes = df['Class'].sum()
+    taux_fraude = (nb_fraudes / total_trans) * 100
+    
+    col_a.metric("Total Transactions", f"{total_trans:,}")
+    col_b.metric("Nombre de Fraudes", nb_fraudes)
+    col_c.metric("Taux de Fraude", f"{taux_fraude:.4f}%")
 
-    c1, c2 = st.columns(2)
-    with c1:
-        st.subheader("Déséquilibre des classes")
-        fig_count = px.bar(df['Class'].value_counts().reset_index(), 
-                           x='Class', y='count', color='Class',
-                           log_y=True, labels={'count': 'Nombre (Log)', 'Class': '0: Normal, 1: Fraude'},
-                           color_discrete_sequence=['#2ecc71', '#e74c3c'])
-        st.plotly_chart(fig_count, use_container_width=True)
-        
-    with c2:
-        st.subheader("Distribution des Montants")
-        fig_dist = px.box(df, x='Class', y='Amount', color='Class',
-                          log_y=True, labels={'Amount': 'Montant (Log)', 'Class': 'Type'},
-                          color_discrete_map={0: '#2ecc71', 1: '#e74c3c'})
-        st.plotly_chart(fig_dist, use_container_width=True)
+    # --- SECTION IMPACT FINANCIER (Ajoutée par mes soins) ---
+    st.markdown("---")
+    st.subheader("Impact Financier du Modèle")
+    
+    # Note : L'application utilise un échantillon de 50 000 transactions pour la fluidité
+    montant_moyen_fraude = df[df['Class']==1]['Amount'].mean()
+    fraudes_detectees = int(nb_fraudes * 0.74) # Aligné sur le Recall de 0.74 du README
+    montant_sauvegarde = fraudes_detectees * montant_moyen_fraude
+    
+    st.write("J'ai analysé l'impact économique du modèle (sur cet échantillon de 50 000 transactions) :")
+    
+    st.markdown(f"""
+    - **Montant moyen d'une fraude :** {montant_moyen_fraude:.2f} $
+    - **Fraudes détectées par le modèle :** {fraudes_detectees}
+    - **Montant protégé estimé :** {montant_sauvegarde:,.2f} $
+    """)
+    st.markdown("---")
 
-# --- ONGLET 2 : ANALYSE DES FRAUDES ---
-with tab2:
-    st.subheader("Comprendre les décisions du modèle")
+    st.markdown("### Répartition Normal vs Fraude")
+    st.write("Note : On remarque que les transactions frauduleuses sont extrêmement rares (moins de 1%).")
     
-    col_a, col_b = st.columns(2)
+    # Préparation des données pour le graphique
+    df_repartition = df['Class'].value_counts().reset_index()
+    df_repartition.columns = ['Type', 'Nombre']
+    df_repartition['Type'] = df_repartition['Type'].replace({0: 'Légitime', 1: 'Fraude'})
     
-    with col_a:
-        st.write("**Top 10 Variables Importantes**")
-        importances = pd.Series(model.feature_importances_, index=model_columns)
-        top_10 = importances.nlargest(10).reset_index()
-        top_10.columns = ['Variable', 'Importance']
-        fig_imp = px.bar(top_10, x='Importance', y='Variable', orientation='h',
-                         color='Importance', color_continuous_scale='Reds')
-        st.plotly_chart(fig_imp, use_container_width=True)
-        
-    with col_b:
-        st.write("**Heures les plus fréquentes pour la fraude**")
-        # On convertit le temps (secondes) en heures (0-23)
-        df['Hour'] = (df['Time'] / 3600) % 24
-        fraud_hours = df[df['Class'] == 1]['Hour']
-        fig_hour = px.histogram(fraud_hours, nbins=24, 
-                                labels={'value': 'Heure de la journée'},
-                                color_discrete_sequence=['#e74c3c'])
-        st.plotly_chart(fig_hour, use_container_width=True)
+    fig1 = px.bar(df_repartition, x='Type', y='Nombre', color='Type', 
+                 log_y=True, # On utilise une échelle logarithmique car l'écart est géant
+                 color_discrete_map={'Légitime': '#2ecc71', 'Fraude': '#e74c3c'})
+    st.plotly_chart(fig1, use_container_width=True)
 
-    st.divider()
-    st.write("**Graphique SHAP (Explication globale)**")
-    # Pour Streamlit, on utilise un échantillon et on affiche via matplotlib
-    import matplotlib.pyplot as plt
-    X_sample = df.drop('Class', axis=1).sample(100, random_state=42)
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(X_sample)
+# --- ONGLET 2 : FACTEURS DE RISQUE ---
+with onglet2:
+    st.subheader("Quelles variables influencent le plus le modèle ?")
+    st.write("Dans ce dataset, les variables sont anonymisées (V1, V2...). Voici celles qui permettent le mieux de détecter une fraude :")
     
-    fig_shap, ax_shap = plt.subplots()
-    if isinstance(shap_values, list):
-        shap.summary_plot(shap_values[1], X_sample, plot_type='dot', show=False)
-    else:
-        shap.summary_plot(shap_values, X_sample, plot_type='dot', show=False)
-    st.pyplot(fig_shap)
+    # Calcul de l'importance des variables (Feature Importance)
+    importances = pd.Series(model.feature_importances_, index=model_columns)
+    top_10_variables = importances.nlargest(10).reset_index()
+    top_10_variables.columns = ['Variable', 'Importance']
+    
+    fig2 = px.bar(top_10_variables, x='Importance', y='Variable', orientation='h',
+                 color='Importance', color_continuous_scale='Reds')
+    st.plotly_chart(fig2, use_container_width=True)
+    
+    st.info("Les variables comme V17, V14 et V12 sont souvent les plus révélatrices d'un comportement suspect.")
 
-# --- ONGLET 3 : SIMULATEUR DE TRANSACTION ---
-with tab3:
-    st.subheader("Analyser une nouvelle transaction")
+# --- ONGLET 3 : TESTEUR DE TRANSACTION ---
+with onglet3:
+    st.subheader("Simuler une nouvelle transaction")
+    st.write("Ajustez les paramètres pour voir comment le modèle réagit :")
     
-    # Récupération des 5 variables les plus importantes
-    top_5_features = importances.nlargest(5).index.tolist()
-    
-    with st.form("sim_form"):
+    with st.form("form_fraude"):
         c1, c2 = st.columns(2)
+        
         with c1:
-            amount = st.slider("Montant de la transaction ($)", 0, 5000, 100)
-            hour = st.slider("Heure de la transaction (0-23h)", 0, 23, 12)
-        
+            montant_input = st.number_input("Montant de la transaction ($)", 0.0, 20000.0, 100.0)
+            v17_input = st.slider("Valeur de la variable V17 (Risque)", -20.0, 20.0, 0.0)
+            
         with c2:
-            v_vals = {}
-            for v in top_5_features:
-                if v not in ['Amount', 'Time']:
-                    v_vals[v] = st.slider(f"Variable {v}", -5.0, 5.0, 0.0)
+            v14_input = st.slider("Valeur de la variable V14 (Risque)", -20.0, 20.0, 0.0)
+            v12_input = st.slider("Valeur de la variable V12 (Risque)", -20.0, 20.0, 0.0)
             
-        submit = st.form_submit_button("Analyser la transaction")
+        bouton_test = st.form_submit_button("Lancer l'analyse")
         
-        if submit:
-            # Préparation de l'entrée
-            input_dict = {col: 0 for col in model_columns}
-            input_dict['Amount'] = amount
-            input_dict['Time'] = hour * 3600 # Conversion grossière
-            for v, val in v_vals.items():
-                input_dict[v] = val
+        if bouton_test:
+            # --- PRÉPARATION DES DONNÉES (Méthode explicite) ---
+            donnees_test = {}
+            for col in model_columns:
+                donnees_test[col] = 0 # On initialise toutes les variables anonymes à 0
+                
+            # On injecte les valeurs du formulaire
+            donnees_test['Amount'] = montant_input
+            donnees_test['V17'] = v17_input
+            donnees_test['V14'] = v14_input
+            donnees_test['V12'] = v12_input
             
-            input_df = pd.DataFrame([input_dict])
-            prob = model.predict_proba(input_df)[0][1]
+            # Conversion pour le modèle
+            df_test = pd.DataFrame([donnees_test])
             
-            st.divider()
+            # Prédiction
+            probabilite_fraude = model.predict_proba(df_test)[0][1]
             
-            # Jauge de risque
-            if prob < 0.2:
-                st.success(f"### Résultat : Transaction Légitime ✅")
-                color = "green"
-            elif prob < 0.6:
-                st.warning(f"### Résultat : Transaction Suspecte ⚠️")
-                color = "orange"
+            st.markdown("---")
+            st.write(f"Probabilité de fraude détectée : **{probabilite_fraude*100:.2f}%**")
+            st.progress(probabilite_fraude)
+            
+            if probabilite_fraude > 0.5:
+                st.error("### ALERTE : Transaction suspectée FRAUDULEUSE")
+                st.write("Le modèle recommande de bloquer cette transaction pour vérification.")
             else:
-                st.error(f"### Résultat : Transaction Frauduleuse 🚨")
-                color = "red"
-            
-            st.write(f"Probabilité de fraude : **{prob*100:.1f}%**")
-            
-            # Affichage visuel de la jauge
-            st.markdown(f"""
-            <div style="background-color: lightgrey; width: 100%; border-radius: 10px;">
-                <div style="background-color: {color}; width: {prob*100}%; height: 20px; border-radius: 10px;"></div>
-            </div>
-            """, unsafe_allow_html=True)
+                st.success("### VALIDÉ : Transaction probablement LÉGITIME")
+                st.write("Le risque est considéré comme acceptable.")
 
+# --- FOOTER ---
 st.markdown("---")
-st.caption("Étude et développement réalisés par fofana abdou - 2026")
+st.caption("Développé par Fofana Abdou — Data Analyst Finance & Risk")

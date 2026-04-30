@@ -9,6 +9,11 @@ La fraude à la carte bancaire représente des millions d'euros de pertes chaque
 - **AUC-PR** : 0.8542 (Une performance très robuste sur des données déséquilibrées)
 - **Top 3 facteurs** : Variables V17, V14 et V12 (issues de la décomposition PCA)
 
+## Impact Business
+- **Montant moyen d'une fraude** : 122.21 $
+- **Fraudes détectées par le modèle** : 364 (basé sur un rappel de 74%)
+- **Montant protégé estimé** : 44 485.00 $
+
 ## Demo live
 [Application interactive](https://fraude-bancaire-uh7zuiuytsizl7wcq6dkd9.streamlit.app/)
 

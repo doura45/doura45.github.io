@@ -1,150 +1,143 @@
 import streamlit as st
-import polars as pl
+import pandas as pd
 import duckdb
 import plotly.express as px
-import plotly.graph_objects as go
 import os
 
-# --- CONFIGURATION ---
+# --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(
-    page_title="Performance Commerciale — Analyse Retail Olist",
+    page_title="Analyse Retail — Fofana Abdou",
     layout="wide"
 )
 
-# --- CHARGEMENT DES DONNÉES AVEC CACHE ---
+# --- CHARGEMENT ET PRÉPARATION DES DONNÉES ---
 @st.cache_data
-def load_and_prepare_data():
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DATA_PATH = os.path.join(BASE_DIR, "..", "data")
+def charger_et_preparer_donnees():
+    # Définition des chemins vers les fichiers CSV
+    dossier_actuel = os.path.dirname(__file__)
+    chemin_data = os.path.join(dossier_actuel, "..", "data")
     
-    # Chargement Polars
-    orders = pl.read_csv(os.path.join(DATA_PATH, "olist_orders_dataset.csv"))
-    items = pl.read_csv(os.path.join(DATA_PATH, "olist_order_items_dataset.csv"))
-    products = pl.read_csv(os.path.join(DATA_PATH, "olist_products_dataset.csv"))
-    sellers = pl.read_csv(os.path.join(DATA_PATH, "olist_sellers_dataset.csv"))
-    
-    # Requête DuckDB
-    query = """
-    SELECT 
-        i.order_id,
-        date_trunc('month', CAST(o.order_purchase_timestamp AS TIMESTAMP)) AS purchase_month,
-        i.product_id,
-        COALESCE(p.product_category_name, 'inconnue') AS category,
-        i.seller_id,
-        i.price
-    FROM items i
-    JOIN orders o ON i.order_id = o.order_id
-    LEFT JOIN products p ON i.product_id = p.product_id
-    JOIN sellers s ON i.seller_id = s.seller_id
-    WHERE o.order_status = 'delivered'
-    """
-    
-    df = duckdb.query(query).pl()
-    return df
+    # On charge les fichiers principaux du dataset Olist
+    try:
+        # Note : On utilise Pandas pour le chargement initial
+        orders = pd.read_csv(os.path.join(chemin_data, "olist_orders_dataset.csv"))
+        items = pd.read_csv(os.path.join(chemin_data, "olist_order_items_dataset.csv"))
+        products = pd.read_csv(os.path.join(chemin_data, "olist_products_dataset.csv"))
+        
+        # --- UTILISATION DE DUCKDB POUR LES JOINTURES ---
+        # C'est une méthode puissante pour manipuler des gros volumes avec du SQL
+        requete_sql = """
+        SELECT 
+            i.order_id,
+            o.order_purchase_timestamp AS date_achat,
+            COALESCE(p.product_category_name, 'Autre') AS categorie,
+            i.price AS prix_article
+        FROM items i
+        JOIN orders o ON i.order_id = o.order_id
+        LEFT JOIN products p ON i.product_id = p.product_id
+        WHERE o.order_status = 'delivered'
+        """
+        
+        # On exécute la requête SQL et on transforme le résultat en DataFrame Pandas
+        df_final = duckdb.query(requete_sql).df()
+        
+        # Conversion des dates pour les analyses temporelles
+        df_final['date_achat'] = pd.to_datetime(df_final['date_achat'])
+        df_final['mois_annee'] = df_final['date_achat'].dt.to_period('M').astype(str)
+        
+        return df_final
+    except Exception as e:
+        st.error(f"Erreur de lecture des données : {e}")
+        return pd.DataFrame()
 
-df = load_and_prepare_data()
+# Chargement effectif
+df = charger_et_preparer_donnees()
 
-# --- SIDEBAR ---
+# --- BARRE LATÉRALE ---
 with st.sidebar:
     st.title("Fofana Abdou")
-    st.markdown("""
-    Analyse de la performance commerciale d'une 
-    plateforme e-commerce : CA, vendeurs, catégories.
-    """)
-    st.divider()
+    st.write("Data Analyst Retail")
+    st.markdown("---")
+    st.info("Analyse de la performance commerciale basée sur le dataset public Olist (Brésil).")
 
-st.title("Performance Commerciale — Analyse Retail Olist")
+# --- TITRE PRINCIPAL ---
+st.title("Performance Commerciale — Olist Store")
 st.markdown("---")
 
-tab1, tab2, tab3 = st.tabs(["Vue Globale", "Analyse Produits & Vendeurs", "Simulateur de CA"])
+# Si les données sont vides, on arrête
+if df.empty:
+    st.warning("Les données n'ont pas pu être chargées.")
+    st.stop()
+
+# --- ONGLETS ---
+tab1, tab2, tab3 = st.tabs(["Vue Globale", "Analyse Catégories", "Simulateur de Croissance"])
 
 # --- ONGLET 1 : VUE GLOBALE ---
 with tab1:
-    col1, col2 = st.columns(2)
+    # Indicateurs clés (KPIs)
+    col1, col2, col3 = st.columns(3)
     
-    ca_total = df['price'].sum()
-    ca_moyen = df.group_by('order_id').agg(pl.sum('price'))['price'].mean()
+    ca_total = df['prix_article'].sum()
+    nb_commandes = df['order_id'].nunique()
+    panier_moyen = ca_total / nb_commandes
     
-    col1.metric("Chiffre d'Affaires Total", f"${ca_total:,.2f}")
-    col2.metric("Chiffre d'Affaires Moyen par Commande", f"${ca_moyen:,.2f}")
+    col1.metric("Chiffre d'Affaires Total", f"{ca_total:,.0f} $")
+    col2.metric("Total Commandes", f"{nb_commandes:,}")
+    col3.metric("Panier Moyen", f"{panier_moyen:.2f} $")
 
-    c1, c2 = st.columns(2)
-    with c1:
-        st.subheader("Top 10 Catégories par CA")
-        cat_ca = df.group_by('category').agg(pl.sum('price').alias('total_ca')).sort('total_ca', descending=True).head(10).to_pandas()
-        fig_cat = px.bar(cat_ca, x='total_ca', y='category', orientation='h', color='total_ca', color_continuous_scale='Blues')
-        st.plotly_chart(fig_cat, use_container_width=True)
-        
-    with c2:
-        st.subheader("Évolution Mensuelle du CA")
-        timeline = df.group_by('purchase_month').agg(pl.sum('price').alias('total_ca')).sort('purchase_month').to_pandas()
-        # Formattage de la date
-        timeline['purchase_month'] = timeline['purchase_month'].dt.strftime('%Y-%m')
-        fig_time = px.line(timeline, x='purchase_month', y='total_ca', markers=True)
-        st.plotly_chart(fig_time, use_container_width=True)
+    st.markdown("### Évolution Mensuelle du Chiffre d'Affaires")
+    # Groupement par mois
+    evolution = df.groupby('mois_annee')['prix_article'].sum().reset_index()
+    
+    fig_line = px.line(evolution, x='mois_annee', y='prix_article', 
+                      title="Croissance du CA (Mensuel)",
+                      markers=True, labels={'prix_article': 'CA ($)', 'mois_annee': 'Mois'})
+    st.plotly_chart(fig_line, use_container_width=True)
 
-
-# --- ONGLET 2 : PRODUITS & VENDEURS ---
+# --- ONGLET 2 : ANALYSE DES CATÉGORIES ---
 with tab2:
-    categories_list = df['category'].unique().to_list()
-    selected_category = st.selectbox("Filtrer par catégorie", ["Toutes"] + categories_list)
+    st.subheader("Quelles sont les catégories les plus rentables ?")
     
-    if selected_category == "Toutes":
-        df_filtered = df
-    else:
-        df_filtered = df.filter(pl.col('category') == selected_category)
-        
-    c1, c2 = st.columns(2)
-    with c1:
-        st.write("**Top Vendeurs par Chiffre d'Affaires**")
-        top_sellers = df_filtered.group_by('seller_id').agg(pl.sum('price').alias('total_ca')).sort('total_ca', descending=True).head(10).to_pandas()
-        st.dataframe(top_sellers, use_container_width=True)
-        
-    with c2:
-        st.write("**Vendeurs Sous-Performants (CA < Moyenne)**")
-        avg_ca = df_filtered.group_by('seller_id').agg(pl.sum('price').alias('total_ca'))['total_ca'].mean()
-        bad_sellers = df_filtered.group_by('seller_id').agg(pl.sum('price').alias('total_ca')).filter(pl.col('total_ca') < avg_ca).sort('total_ca', descending=False).head(10).to_pandas()
-        st.dataframe(bad_sellers, use_container_width=True)
-        
-    st.write("**Scatter Plot : Volume vs CA par Catégorie**")
-    cat_analysis = df.group_by('category').agg([
-        pl.mean('price').alias('avg_price'),
-        pl.len().alias('volume'),
-        pl.sum('price').alias('total_ca')
-    ]).to_pandas()
+    # Top 10 des catégories par CA
+    top_categories = df.groupby('categorie')['prix_article'].sum().sort_values(ascending=False).head(10).reset_index()
     
-    fig_scatter = px.scatter(cat_analysis, x='volume', y='total_ca', size='avg_price', hover_name='category', color='total_ca', color_continuous_scale='RdYlGn')
-    st.plotly_chart(fig_scatter, use_container_width=True)
+    fig_bar = px.bar(top_categories, x='prix_article', y='categorie', 
+                    orientation='h', color='prix_article',
+                    title="Top 10 Catégories par Chiffre d'Affaires",
+                    color_continuous_scale='Viridis',
+                    labels={'prix_article': 'CA Total ($)', 'categorie': 'Catégorie'})
+    st.plotly_chart(fig_bar, use_container_width=True)
 
-
-# --- ONGLET 3 : SIMULATEUR ---
+# --- ONGLET 3 : SIMULATEUR DE CROISSANCE ---
 with tab3:
-    st.subheader("Simulateur de Chiffre d'Affaires")
-    st.write("Ajustez les paramètres pour voir l'impact immédiat sur les revenus de la plateforme.")
+    st.subheader("Simulateur d'Objectifs")
+    st.write("Ajustez les leviers pour estimer l'impact sur le CA global :")
     
     c1, c2 = st.columns(2)
     with c1:
-        price_adj = st.slider("Augmentation Prix de vente (%)", -20, 50, 0)
+        hausse_prix = st.slider("Ajustement des Prix (%)", -20, 50, 0)
     with c2:
-        volume_adj = st.slider("Augmentation Volume des ventes (%)", -20, 50, 0)
+        hausse_volume = st.slider("Ajustement du Volume de ventes (%)", -20, 50, 0)
         
-    # Simulation
-    price_multiplier = 1 + (price_adj / 100)
-    volume_multiplier = 1 + (volume_adj / 100)
+    # Calculs de simulation simples
+    ca_actuel = ca_total
+    ca_simule = ca_actuel * (1 + hausse_prix/100) * (1 + hausse_volume/100)
+    difference_ca = ca_simule - ca_actuel
     
-    # Calculs simulés
-    simulated_ca = ca_total * price_multiplier * volume_multiplier
-    diff_ca = simulated_ca - ca_total
+    st.markdown("---")
+    st.metric("Chiffre d'Affaires Estimé", f"{ca_simule:,.0f} $", 
+             delta=f"{difference_ca:,.0f} $", delta_color="normal")
     
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.metric("Nouveau CA Total Estimé", f"${simulated_ca:,.2f}", f"{diff_ca:,.2f} $", delta_color="normal")
-        
-    with col_b:
-        # Mini graphique de comparaison
-        fig_comp = go.Figure(data=[
-            go.Bar(name='CA Actuel', x=['Chiffre d\'Affaires'], y=[ca_total], marker_color='grey'),
-            go.Bar(name='CA Simulé', x=['Chiffre d\'Affaires'], y=[simulated_ca], marker_color='#2ecc71' if diff_ca > 0 else '#e74c3c')
-        ])
-        fig_comp.update_layout(barmode='group')
-        st.plotly_chart(fig_comp, use_container_width=True)
+    # Graphique de comparaison
+    data_comp = pd.DataFrame({
+        'Scénario': ['Actuel', 'Simulé'],
+        'CA': [ca_actuel, ca_simule]
+    })
+    
+    fig_comp = px.bar(data_comp, x='Scénario', y='CA', color='Scénario',
+                     color_discrete_map={'Actuel': '#bdc3c7', 'Simulé': '#2ecc71'})
+    st.plotly_chart(fig_comp, use_container_width=True)
+
+# --- FOOTER ---
+st.markdown("---")
+st.caption("Analyse réalisée par Fofana Abdou — Source : Dataset Olist")

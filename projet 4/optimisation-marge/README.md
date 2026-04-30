@@ -1,9 +1,9 @@
-# Optimisation du Chiffre d'Affaires — Analyse Retail
+# Analyse de la Performance Commerciale — Olist Stores — Analyse Retail
 
 Analyse approfondie de la performance commerciale e-commerce (données Olist) en utilisant des technologies modernes et ultra-rapides.
 
 ## Problème business
-Identifier les véritables moteurs de croissance au sein du catalogue produit et des vendeurs partenaires. L'objectif est d'utiliser le Chiffre d'Affaires comme proxy de la performance pour purger le catalogue des produits et vendeurs sous-performants qui parasitent la plateforme.
+Comprendre la dynamique des ventes et la performance des livraisons est crucial pour un leader de l'e-commerce comme Olist. Ce projet analyse la performance commerciale (chiffre d'affaires, paniers moyens) et logistique pour identifier les leviers de croissance et les zones de friction dans le parcours client. Chiffre d'Affaires comme proxy de la performance pour purger le catalogue des produits et vendeurs sous-performants qui parasitent la plateforme.
 
 ## Résultats clés (vrais chiffres)
 - **Chiffre d'Affaires Total** : $13 221 498

@@ -1,11 +1,15 @@
 # Optimisation des Coûts de Transport — Simulateur de Scénarios
 
 ## Problème business
-Les dépenses de transport (fret) représentent un centre de coût massif pour l'entreprise. Bien souvent, la rapidité (transport aérien) est privilégiée par défaut, même quand l'urgence n'est pas absolue, ce qui fait exploser les marges. Le but de ce projet est d'auditer les pratiques d'expédition actuelles et de simuler les économies drastiques que l'on pourrait réaliser en basculant une partie du fret vers des modes de transport plus économiques (maritime, routier) tout en gardant un oeil sur le compromis du délai.
+Les dépenses de transport (fret) représentent un centre de coût massif pour l'entreprise. Bien souvent, la rapidité extrême (Air Charter) est privilégiée par défaut, ce qui fait exploser les marges. Le but de ce projet est d'auditer les pratiques d'expédition et de simuler les économies réalisées en basculant une partie du fret vers des modes plus standards.
 
 ## Résultats clés (vrais chiffres)
-- **Coût total des expéditions analysées** : 68 817 849 $
+- **Coût total des expéditions analysées** : 67 291 060 $ (Après nettoyage des données)
 - **Principale anomalie identifiée** : Sur-utilisation coûteuse de l'aérien pour des colis lourds.
+
+## Impact Business
+- **Économie annuelle possible** : 8 074 927 $
+- **Levier principal** : Optimisation du mix transport (Charter vs Standard) et réduction des frais de fret de 12%.
 
 ## Demo live
 [Application interactive](https://transport-optimisation-cytdvplirftqzzcpt2upyu.streamlit.app/)

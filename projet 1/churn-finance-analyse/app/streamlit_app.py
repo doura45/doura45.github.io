@@ -6,171 +6,172 @@ import plotly.express as px
 import plotly.graph_objects as go
 import os
 
-# --- CHEMINS ABSOLUS POUR ÉVITER LES ERREURS ---
-# On récupère le dossier où se trouve ce script (le dossier 'app')
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Le dossier data est au même niveau que le dossier app
-DATA_PATH = os.path.join(BASE_DIR, "..", "data", "WA_Fn-UseC_-Telco-Customer-Churn.csv")
-MODEL_PATH = os.path.join(BASE_DIR, "model.joblib")
-COLUMNS_PATH = os.path.join(BASE_DIR, "model_columns.joblib")
-
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(
     page_title="Analyse du Churn Client",
-    page_icon="🏦",
     layout="wide"
 )
 
-# --- CHARGEMENT DES DONNÉES ET DU MODÈLE ---
+# --- CHARGEMENT DES FICHIERS ---
+# On définit où se trouvent nos fichiers de manière explicite
+dossier_actuel = os.path.dirname(__file__)
+chemin_data = os.path.join(dossier_actuel, "..", "data", "WA_Fn-UseC_-Telco-Customer-Churn.csv")
+chemin_modele = os.path.join(dossier_actuel, "model.joblib")
+chemin_colonnes = os.path.join(dossier_actuel, "model_columns.joblib")
+
 @st.cache_data
-def load_data():
-    df = pd.read_csv(DATA_PATH)
-    df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce').fillna(0)
+def charger_donnees():
+    # Chargement du CSV
+    df = pd.read_csv(chemin_data)
+    
+    # Nettoyage de la colonne TotalCharges (étape par étape)
+    # 1. On force la conversion en nombre, les erreurs (cases vides) deviennent des "NaN"
+    df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
+    # 2. On remplace les cases vides (NaN) par 0 pour pouvoir faire des calculs
+    df['TotalCharges'] = df['TotalCharges'].fillna(0)
+    
     return df
 
 @st.cache_resource
-def load_model():
-    model = joblib.load(MODEL_PATH)
-    columns = joblib.load(COLUMNS_PATH)
-    return model, columns
+def charger_modele():
+    # Chargement du modèle de Machine Learning et des colonnes nécessaires
+    model = joblib.load(chemin_modele)
+    colonnes = joblib.load(chemin_colonnes)
+    return model, colonnes
 
-# Chargement sécurisé
+# Exécution du chargement avec une sécurité
 try:
-    df = load_data()
-    model, model_columns = load_model()
+    df = charger_donnees()
+    model, model_columns = charger_modele()
 except Exception as e:
-    st.error(f"Erreur de chargement des fichiers : {e}")
+    st.error(f"Erreur lors du chargement des fichiers : {e}")
     st.stop()
 
-# --- SIDEBAR ---
+# --- BARRE LATÉRALE (SIDEBAR) ---
 with st.sidebar:
     st.title("Fofana Abdou")
-    st.markdown("""
-    **Étude de la Fidélisation Client**
-    J'ai conçu cette plateforme pour visualiser les résultats de mes recherches sur le churn et tester les capacités prédictives de mon modèle en temps réel.
-    """)
-    st.divider()
-    st.info("Utilisez les onglets pour naviguer entre les analyses.")
+    st.write("Data Analyst")
+    st.markdown("---")
+    st.info("Utilisez les onglets pour explorer l'analyse.")
 
 # --- TITRE PRINCIPAL ---
-st.title("🏦 Analyse du Churn Client — Secteur Bancaire")
+st.title("Analyse du Churn — Secteur Télécom")
 st.markdown("---")
 
 # --- ONGLETS ---
-tab1, tab2, tab3 = st.tabs(["Vue Globale", "Causes du Churn", "Simulateur Client"])
+onglet1, onglet2, onglet3 = st.tabs(["Vue Globale", "Analyse des Causes", "Simulateur de Risque"])
 
 # --- ONGLET 1 : VUE GLOBALE ---
-with tab1:
-    col1, col2, col3 = st.columns(3)
+with onglet1:
+    col_m1, col_m2, col_m3 = st.columns(3)
     
-    # Métrique principale (calculée dynamiquement)
-    real_churn_rate = (df['Churn'].value_counts(normalize=True)['Yes'] * 100)
-    col1.metric("Taux de Churn Global", f"{real_churn_rate:.1f}%")
-    col2.metric("Total Clients", f"{len(df)}")
-    col3.metric("Revenu Moyen (Mensuel)", f"${df['MonthlyCharges'].mean():.2f}")
+    # Calculs simples pour les métriques
+    total_clients = len(df)
+    clients_partis = len(df[df['Churn'] == 'Yes'])
+    taux_de_churn = (clients_partis / total_clients) * 100
+    panier_moyen = df['MonthlyCharges'].mean()
 
-    col_left, col_right = st.columns(2)
+    col_m1.metric("Taux de Churn", f"{taux_de_churn:.1f}%")
+    col_m2.metric("Total Clients", total_clients)
+    col_m3.metric("Revenu Moyen Mensuel", f"${panier_moyen:.2f}")
+
+    st.markdown("### Répartition des clients")
+    c1, c2 = st.columns(2)
     
-    with col_left:
-        st.subheader("Répartition du Churn")
+    with c1:
+        st.write("**Départs vs Fidèles**")
         fig_pie = px.pie(df, names='Churn', hole=0.5, 
-                         color_discrete_sequence=['#2ecc71', '#e74c3c'],
-                         labels={'Churn': 'Départ'})
+                         color_discrete_sequence=['#2ecc71', '#e74c3c'])
         st.plotly_chart(fig_pie, use_container_width=True)
         
-    with col_right:
-        st.subheader("Taux de Churn par Type de Contrat")
-        # Calcul du taux par contrat
-        contract_churn = df.groupby('Contract')['Churn'].value_counts(normalize=True).unstack()['Yes'] * 100
-        contract_churn = contract_churn.reset_index()
-        contract_churn.columns = ['Type de Contrat', 'Taux de Churn (%)']
+    with c2:
+        st.write("**Taux de départ par type de contrat**")
+        # On calcule le taux de départ pour chaque contrat
+        df_contrat = df.groupby('Contract')['Churn'].value_counts(normalize=True).unstack()
+        df_contrat = df_contrat.reset_index()
         
-        fig_bar = px.bar(contract_churn, 
-                         x='Type de Contrat', 
-                         y='Taux de Churn (%)',
-                         color='Type de Contrat',
-                         text='Taux de Churn (%)',
-                         color_discrete_sequence=px.colors.qualitative.Pastel,
-                         labels={'Taux de Churn (%)': 'Taux (%)'})
-        
-        # Formatage des labels sur les barres
-        fig_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+        fig_bar = px.bar(df_contrat, x='Contract', y='Yes', 
+                         title="Probabilité de départ par contrat",
+                         labels={'Yes': 'Taux de Churn (%)'},
+                         color='Contract')
         st.plotly_chart(fig_bar, use_container_width=True)
 
-# --- ONGLET 2 : CAUSES DU CHURN ---
-with tab2:
-    st.subheader("Analyse des comportements de départ")
+# --- ONGLET 2 : ANALYSE DES CAUSES ---
+with onglet2:
+    st.subheader("Facteurs influençant le départ")
     
     col_a, col_b = st.columns(2)
     
     with col_a:
-        st.write("**Impact des Mensualités**")
+        st.write("**Impact du prix (Monthly Charges)**")
         fig_box = px.box(df, x="Churn", y="MonthlyCharges", color="Churn",
-                         color_discrete_map={'No': '#2ecc71', 'Yes': '#e74c3c'},
-                         labels={'MonthlyCharges': 'Frais Mensuels ($)'})
+                         color_discrete_map={'No': '#2ecc71', 'Yes': '#e74c3c'})
         st.plotly_chart(fig_box, use_container_width=True)
         
     with col_b:
-        st.write("**Impact de l'Ancienneté**")
-        tenure_avg = df.groupby('Churn')['tenure'].mean().reset_index()
-        fig_tenure = px.bar(tenure_avg, x='Churn', y='tenure', color='Churn',
-                            color_discrete_map={'No': '#2ecc71', 'Yes': '#e74c3c'},
-                            labels={'tenure': 'Ancienneté Moyenne (Mois)'})
+        st.write("**Impact de l'ancienneté (Tenure)**")
+        # On regarde l'ancienneté moyenne
+        anciennete_moyenne = df.groupby('Churn')['tenure'].mean().reset_index()
+        fig_tenure = px.bar(anciennete_moyenne, x='Churn', y='tenure', color='Churn',
+                            labels={'tenure': 'Moyenne de mois de présence'})
         st.plotly_chart(fig_tenure, use_container_width=True)
-        
-    st.divider()
-    
-    # Top 5 Variables
-    st.subheader("🎯 Les 5 facteurs déterminants de mon modèle")
-    importances = pd.Series(model.feature_importances_, index=model_columns)
-    top_5 = importances.nlargest(5).reset_index()
-    top_5.columns = ['Variable', 'Importance']
-    
-    fig_imp = px.bar(top_5, x='Importance', y='Variable', orientation='h',
-                     color='Importance', color_continuous_scale='Greens')
-    st.plotly_chart(fig_imp, use_container_width=True)
 
-# --- ONGLET 3 : SIMULATEUR CLIENT ---
-with tab3:
-    st.subheader("Estimation du risque pour un nouveau profil")
+# --- ONGLET 3 : SIMULATEUR DE RISQUE ---
+with onglet3:
+    st.subheader("Prédire le risque pour un nouveau client")
+    st.write("Le modèle Random Forest identifie les clients à risque avec une précision globale de 80%.")
+    st.info("Note technique : Pour maximiser la détection (Recall à 71.4%), le seuil de probabilité a été optimisé à 0.3.")
     
-    with st.form("prediction_form"):
-        c1, c2 = st.columns(2)
+    with st.form("simulateur"):
+        col1, col2 = st.columns(2)
         
-        with c1:
-            tenure = st.slider("Ancienneté (mois)", 0, 72, 12)
-            contract = st.selectbox("Type de contrat", ["Month-to-month", "One year", "Two year"])
-            internet = st.selectbox("Service Internet", ["Fiber optic", "DSL", "No"])
-            
-        with c2:
-            monthly = st.slider("Mensualité ($)", 20, 120, 70)
-            tech_support = st.selectbox("Support Technique", ["No", "Yes", "No internet service"])
-            
-        submit = st.form_submit_button("Calculer le risque de départ")
+        with col1:
+            tenure_input = st.slider("Ancienneté (nombre de mois)", 0, 72, 12)
+            contract_input = st.selectbox("Type de contrat", ["Month-to-month", "One year", "Two year"])
         
-        if submit:
-            input_dict = {col: 0 for col in model_columns}
-            input_dict['tenure'] = tenure
-            input_dict['MonthlyCharges'] = monthly
+        with col2:
+            charges_input = st.number_input("Montant de la facture mensuelle ($)", 20, 150, 70)
+            internet_input = st.selectbox("Service Internet", ["Fiber optic", "DSL", "No"])
             
-            if f'Contract_{contract}' in input_dict: input_dict[f'Contract_{contract}'] = 1
-            if f'InternetService_{internet}' in input_dict: input_dict[f'InternetService_{internet}'] = 1
-            if f'TechSupport_{tech_support}' in input_dict: input_dict[f'TechSupport_{tech_support}'] = 1
+        bouton_calcul = st.form_submit_button("Estimer le risque")
+        
+        if bouton_calcul:
+            # --- PRÉPARATION DES DONNÉES (Méthode explicite) ---
+            # On crée un dictionnaire avec toutes les colonnes du modèle mises à 0
+            nouveau_client = {}
+            for col in model_columns:
+                nouveau_client[col] = 0
             
-            input_df = pd.DataFrame([input_dict])
-            prob = model.predict_proba(input_df)[0][1]
-            prediction = "DÉPART" if prob > 0.3 else "FIDÈLE"
+            # On remplit les valeurs saisies
+            nouveau_client['tenure'] = tenure_input
+            nouveau_client['MonthlyCharges'] = charges_input
             
-            st.divider()
-            if prediction == "DÉPART":
-                st.error(f"### Résultat : Ce client risque de partir 🚨")
-                st.warning(f"Probabilité de churn : **{prob*100:.1f}%**")
+            # On gère le One-Hot Encoding (manuellement pour être clair)
+            colonne_contrat = "Contract_" + contract_input
+            if colonne_contrat in nouveau_client:
+                nouveau_client[colonne_contrat] = 1
+                
+            colonne_internet = "InternetService_" + internet_input
+            if colonne_internet in nouveau_client:
+                nouveau_client[colonne_internet] = 1
+            
+            # Conversion en DataFrame pour le modèle
+            df_prediction = pd.DataFrame([nouveau_client])
+            
+            # Calcul de la probabilité
+            proba = model.predict_proba(df_prediction)[0][1]
+            risque_pourcentage = proba * 100
+            
+            st.markdown("---")
+            if proba > 0.35:
+                st.error(f"### Risque élevé : {risque_pourcentage:.1f}%")
+                st.warning("Le client présente des caractéristiques typiques de départ.")
             else:
-                st.success(f"### Résultat : Ce client est probablement fidèle ✅")
-                st.info(f"Probabilité de churn : **{prob*100:.1f}%**")
+                st.success(f"### Risque faible : {risque_pourcentage:.1f}%")
+                st.info("Le client est probablement fidèle.")
             
-            st.progress(prob)
+            st.progress(proba)
 
 # --- FOOTER ---
 st.markdown("---")
-st.caption("Étude et développement réalisés par fofana abdou - 2026")
+st.caption("Étude et développement réalisés par Fofana Abdou — Data Analyst Portfolio 2026")
