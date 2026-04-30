@@ -81,9 +81,9 @@ with tab1:
     nb_annees = df['Date'].dt.year.nunique()
     volume_annuel_moyen = total_unites_hist / nb_annees
     
-    # Calcul du gain (Hypothèse : 0.105% de la demande est perdue en rupture sans prévision)
+    # Calcul du gain (Hypothèse : 0.1046% de la demande est perdue en rupture sans prévision)
     prix_moyen_unite = 25 
-    gain_annuel_estime = volume_annuel_moyen * 0.00105 * prix_moyen_unite * 0.40 # 40% de réduction des pertes
+    gain_annuel_estime = volume_annuel_moyen * 0.001046 * prix_moyen_unite * 0.40 # 40% de réduction des pertes
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Volume Historique Total", f"{total_unites_hist:,.0f}")

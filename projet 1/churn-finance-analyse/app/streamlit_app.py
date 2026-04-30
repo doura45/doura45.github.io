@@ -120,7 +120,7 @@ with onglet2:
 with onglet3:
     st.subheader("Prédire le risque pour un nouveau client")
     st.write("Le modèle Random Forest identifie les clients à risque avec une précision globale de 80%.")
-    st.info("Note technique : Pour maximiser la détection (Recall à 71.4%), le seuil de probabilité a été optimisé à 0.3.")
+    st.info("Note technique : Pour maximiser la détection (Recall à 70.1%), le seuil de probabilité a été optimisé à 0.3.")
     
     with st.form("simulateur"):
         col1, col2 = st.columns(2)
