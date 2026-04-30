@@ -5,7 +5,7 @@ Les ruptures de stock engendrent des pertes de chiffre d'affaires massives et d�
 
 ## Résultats clés (vrais chiffres)
 - **Nombre total de produits analysés** : 2 160
-- **Produits prioritaires** (Top 1% volume + forte volatilité) : Analyse ciblée sur les références critiques.
+- **Produits critiques identifiés** : 4 (Règle : Volume > 100M unités & CV > 2.0)
 
 ## Impact Business
 - **Manque à gagner évité (Est.)** : 7 671 444 $ par an

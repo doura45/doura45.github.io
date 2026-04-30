@@ -8,8 +8,8 @@ Les dépenses de transport (fret) représentent un centre de coût massif pour l
 - **Principale anomalie identifiée** : Sur-utilisation coûteuse de l'aérien pour des colis lourds.
 
 ## Impact Business
-- **Économie annuelle possible** : 8 074 927 $
-- **Levier principal** : Optimisation du mix transport (Charter vs Standard) et réduction des frais de fret de 12%.
+- **Économie annuelle cible (Global)** : 8 074 927 $ (Basé sur un objectif de -12% du budget fret)
+- **Levier principal** : Optimisation du mix transport (Charter vs Standard). Le simulateur permet de tester ces scénarios au cas par cas.
 
 ## Demo live
 [Application interactive](https://transport-optimisation-cytdvplirftqzzcpt2upyu.streamlit.app/)

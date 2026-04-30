@@ -5,9 +5,8 @@ Dans le secteur bancaire, 26.5% des clients quittent leur établissement chaque 
 
 ## Résultats clés
 - Taux de churn global : 26.5%
-- Modèle Random Forest : détecte 71% des clients à risque (Recall 0.714)
-- AUC-ROC : 0.820
-- Top 3 causes : ancienneté faible, contrat mensuel, mensualités élevées
+- Modèle Random Forest : détecte 71% des clients à risque- **Recall (Rappel)** : 70.1% (au seuil de 0.3)
+- **Top 3 facteurs de départ** : Type de contrat, Méthode de paiement, Ancienneté (Tenure)
 
 ## Demo live
 [Application interactive](https://churn-finance-analyse-rbp3gik2mgpd3agnkjure2.streamlit.app/)

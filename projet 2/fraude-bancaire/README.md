@@ -11,8 +11,8 @@ La fraude à la carte bancaire représente des millions d'euros de pertes chaque
 
 ## Impact Business
 - **Montant moyen d'une fraude** : 122.21 $
-- **Fraudes détectées par le modèle** : 364 (basé sur un rappel de 74%)
-- **Montant protégé estimé** : 44 485.00 $
+- **Fraudes détectées par le modèle** : 366 (basé sur un rappel de 74.49%)
+- **Montant protégé estimé** : 44 729.00 $
 
 ## Demo live
 [Application interactive](https://fraude-bancaire-uh7zuiuytsizl7wcq6dkd9.streamlit.app/)
