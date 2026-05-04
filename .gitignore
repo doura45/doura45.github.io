@@ -6,3 +6,9 @@ data/
 .DS_Store
 .venv/
 __pycache__/
+
+# Sécurité & Secrets
+.env
+.python-version
+secrets.toml
+credentials.json
